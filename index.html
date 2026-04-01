@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      padding: 20px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      padding: 40px;
+      width: 100%;
+      max-width: 420px;
+      color: #fff;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.6rem;
+      font-weight: 300;
+      letter-spacing: 2px;
+      margin-bottom: 32px;
+      color: rgba(255, 255, 255, 0.85);
+      text-transform: uppercase;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    input {
+      flex: 1;
+      padding: 14px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    input:focus {
+      border-color: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    button {
+      padding: 14px 20px;
+      border: none;
+      border-radius: 12px;
+      background: #e94560;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    button:hover  { background: #c73652; }
+    button:active { transform: scale(0.97); }
+
+    .error {
+      display: none;
+      text-align: center;
+      color: #e94560;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+    }
+
+    .error.visible { display: block; }
+
+    .weather {
+      display: none;
+      text-align: center;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .weather.visible { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .city-name {
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    .country {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 16px;
+    }
+
+    .icon-wrap img {
+      width: 100px;
+      height: 100px;
+      filter: drop-shadow(0 4px 12px rgba(233, 69, 96, 0.4));
+    }
+
+    .description {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.6);
+      text-transform: capitalize;
+      margin-bottom: 16px;
+    }
+
+    .temp {
+      font-size: 5rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 32px;
+      background: linear-gradient(135deg, #fff 0%, #e94560 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .temp sup {
+      font-size: 2rem;
+      font-weight: 400;
+      vertical-align: super;
+    }
+
+    .details {
+      display: flex;
+      justify-content: space-around;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 24px;
+    }
+
+    .detail-item .value {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .detail-item .label {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.45);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Weather</h1>
+
+    <div class="search-row">
+      <input id="cityInput" type="text" placeholder="Enter city name..." autocomplete="off" />
+      <button id="searchBtn">Search</button>
+    </div>
+
+    <div class="error" id="error"></div>
+
+    <div class="weather" id="weather">
+      <div class="city-name" id="cityName"></div>
+      <div class="country"   id="country"></div>
+      <div class="icon-wrap">
+        <img id="weatherIcon" src="" alt="weather icon" />
+      </div>
+      <div class="description" id="description"></div>
+      <div class="temp"><span id="temp"></span><sup>°C</sup></div>
+      <div class="details">
+        <div class="detail-item">
+          <div class="value" id="feelsLike"></div>
+          <div class="label">Feels like</div>
+        </div>
+        <div class="detail-item">
+          <div class="value" id="humidity"></div>
+          <div class="label">Humidity</div>
+        </div>
+        <div class="detail-item">
+          <div class="value" id="wind"></div>
+          <div class="label">Wind</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_KEY = '0221ae19fafdc3b780cc30055d6df3b4';
+
+    const input       = document.getElementById('cityInput');
+    const searchBtn   = document.getElementById('searchBtn');
+    const weatherEl   = document.getElementById('weather');
+    const errorEl     = document.getElementById('error');
+
+    async function fetchWeather() {
+      const city = input.value.trim();
+      if (!city) return;
+
+      errorEl.classList.remove('visible');
+      weatherEl.classList.remove('visible');
+
+      try {
+        const res  = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`
+        );
+
+        if (!res.ok) throw new Error();
+
+        const d = await res.json();
+
+        document.getElementById('cityName').textContent    = d.name;
+        document.getElementById('country').textContent     = d.sys.country;
+        document.getElementById('temp').textContent        = Math.round(d.main.temp);
+        document.getElementById('feelsLike').textContent   = Math.round(d.main.feels_like) + '°C';
+        document.getElementById('humidity').textContent    = d.main.humidity + '%';
+        document.getElementById('wind').textContent        = Math.round(d.wind.speed) + ' m/s';
+        document.getElementById('description').textContent = d.weather[0].description;
+        document.getElementById('weatherIcon').src         = `https://openweathermap.org/img/wn/${d.weather[0].icon}@2x.png`;
+
+        weatherEl.classList.add('visible');
+      } catch {
+        errorEl.textContent = 'City not found. Please try again.';
+        errorEl.classList.add('visible');
+      }
+    }
+
+    searchBtn.addEventListener('click', fetchWeather);
+    input.addEventListener('keydown', e => e.key === 'Enter' && fetchWeather());
+  </script>
+</body>
+</html>
