@@ -167,10 +167,28 @@
       letter-spacing: 1px;
       margin-top: 4px;
     }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 20px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.55);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: rgba(255, 255, 255, 0.9); }
   </style>
 </head>
 <body>
   <div class="card">
+    <a href="https://micmaru.github.io" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2L4 7l5 5"/></svg>
+      Back to Portfolio
+    </a>
     <h1>Weather</h1>
 
     <div class="search-row">
